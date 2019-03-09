@@ -1,0 +1,64 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>In Templates Getting Started: Serving Web Content</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link href="/css/jquery-ui.css" rel="stylesheet">
+</head>
+<body>
+<!-- Tabs -->
+<h2 class="demoHeaders">Tabs</h2>
+<div id="tabs">
+    <ul>
+        <li><a href="#tabs-0">Ajax TEST</a></li>
+        <li><a href="#tabs-1">깜댕연두</a></li>
+        <li><a href="#tabs-2">결혼욘두</a></li>
+        <li><a href="#tabs-3">나쁜욘두</a></li>
+    </ul>
+    <div id="tabs-0">
+        <button type="button" id="ajaxButton">Run REST To Clipper</button>
+        <p>
+            <label>Prediction Output</label>
+        </p>
+        <textarea id="query-result" cols = "100" rows="10"></textarea>
+    </div>
+    <div id="tabs-1">
+        <img src="/img/black.jpg" style="width:100%">
+    </div>
+    <div id="tabs-2">
+        <img src="/img/wedding.jpg" style="width:100%">
+    </div>
+    <div id="tabs-3">
+        <img src="/img/bed.jpg" style="width:100%">
+    </div>
+</div>
+
+</body>
+</html>
+<script src="/js/jquery-3.3.1.min.js"></script>
+<script src="/js/jquery-ui.min.js"></script>
+<script src="/js/rest-util.js"></script>
+<script>
+    $(document).ready(function() {
+        console.log("init completed...");
+    });
+
+    $('#test-button').click(function() {
+        var input_value = $('#input-test').val();
+        alert(input_value);
+    });
+
+    $( "#tabs" ).tabs();
+
+    $( '#ajaxButton' ).click(function(event) {
+        event.preventDefault();
+        let param = new Object();
+        param.modelName = "hello-world";
+        param.input = [1.1, 2.2, 3.3, 5.5];
+        console.log(param);
+        let restUtilPost = new RestUtil("POST", "/ajax/predict", JSON.stringify(param));
+        const id = "query-result";
+        restUtilPost.doAjax(id);
+    });
+
+</script>
