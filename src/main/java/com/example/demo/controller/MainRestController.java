@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.model.ClipperRestPostBody;
 import com.example.demo.model.PredictionData;
 
+import com.example.demo.service.CommandService;
 import com.example.demo.service.RestService;
 import com.example.demo.util.ClipperUtil;
 import com.google.gson.Gson;
@@ -12,15 +13,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
 import java.util.Arrays;
 
 @RestController
 public class MainRestController {
     private final Logger logger = LogManager.getLogger("MainRestController");
     private final RestService restService;
+    private final CommandService commandService;
 
     @Autowired
-    public MainRestController(RestService restService) {
+    public MainRestController(RestService restService,
+                              CommandService commandService) {
+        this.commandService = commandService;
         this.restService = restService;
     }
 
@@ -51,5 +57,14 @@ public class MainRestController {
         Gson gson = new Gson();
         String data = gson.toJson(predictionData);
         return restService.restPostContentJson(url, data);
+    }
+
+    @PostMapping(path= "/ajax/testCommand")
+    public void testCommand() {
+        try {
+            commandService.runCommand("aaa");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

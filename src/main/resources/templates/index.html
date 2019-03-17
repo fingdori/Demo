@@ -14,6 +14,7 @@
         <li><a href="#tabs-1">plotly.js</a></li>
         <li><a href="#tabs-2">extends Graph</a></li>
         <li><a href="#tabs-3">angel 욘두</a></li>
+        <li><a href="#tabs-4">TEST</a></li>
     </ul>
     <div id="tabs-0">
         <button type="button" id="ajaxButton">Run REST To Clipper</button>
@@ -70,6 +71,10 @@
             </div>
         </div>
     </div>
+    <div id="tabs-4">
+        <label>Test Run Command</label>
+        <button onclick="runCommand()">TEST COMMAND</button>
+    </div>
 </div>
 
 </body>
@@ -110,4 +115,16 @@
     const wsPort = window.location.port;
     // var client = new WebSocketClient('ws', '127.0.0.1', 8080, '/endpoint');
     // client.connect();
+
+    function runCommand() {
+        $.ajax({
+            method: 'POST',
+            url: '/ajax/testCommand',
+            contentType: 'application/json',
+            dataType: 'json'
+        })
+            .always(function( msg ) {
+                console.log("msg : " + msg);
+            });
+    }
 </script>
