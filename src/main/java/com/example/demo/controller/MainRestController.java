@@ -4,6 +4,7 @@ import com.example.demo.model.ClipperRestPostBody;
 import com.example.demo.model.PredictionData;
 
 import com.example.demo.service.CommandService;
+import com.example.demo.service.DatabaseService;
 import com.example.demo.service.RestService;
 import com.example.demo.util.ClipperUtil;
 import com.google.gson.Gson;
@@ -22,12 +23,15 @@ public class MainRestController {
     private final Logger logger = LogManager.getLogger("MainRestController");
     private final RestService restService;
     private final CommandService commandService;
+    private final DatabaseService databaseService;
 
     @Autowired
     public MainRestController(RestService restService,
-                              CommandService commandService) {
+                              CommandService commandService,
+                              DatabaseService databaseService) {
         this.commandService = commandService;
         this.restService = restService;
+        this.databaseService = databaseService;
     }
 
     @PostMapping(path = "/ajax/predict", consumes = "application/json")
@@ -66,5 +70,10 @@ public class MainRestController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @PostMapping(path= "/ajax/testDb")
+    public void testDb() {
+        this.databaseService.getUser();
     }
 }
