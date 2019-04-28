@@ -76,4 +76,8 @@ public class MainRestController {
     public void testDb() {
         this.databaseService.getUser();
     }
+    @PostMapping(path= "/ajax/selectUser")
+    public String selectTable() {
+        return this.databaseService.selectTable();
+    }
 }

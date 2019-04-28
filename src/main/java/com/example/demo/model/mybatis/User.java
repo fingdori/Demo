@@ -4,7 +4,7 @@ public class User {
     private int id;
     private String name;
     private String description;
-    private String[] models;
+    private String models;
 
     public int getId() {
         return id;
@@ -30,11 +30,11 @@ public class User {
         this.description = description;
     }
 
-    public String[] getModels() {
+    public String getModels() {
         return models;
     }
 
-    public void setModels(String[] models) {
+    public void setModels(String models) {
         this.models = models;
     }
 
@@ -54,7 +54,8 @@ public class User {
         sb.append("\n");
 
         sb.append("models :");
-        sb.append(String.join(", ", getModels()));
+        sb.append(getModels());
+//        sb.append(String.join(", ", getModels()));
 
         return sb.toString();
     }

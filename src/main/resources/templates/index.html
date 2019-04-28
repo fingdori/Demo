@@ -4,6 +4,9 @@
     <title>In Templates Getting Started: Serving Web Content</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link href="/css/jquery-ui.css" rel="stylesheet">
+    <link href="/css/datatables/dataTables.jqueryui.min.css" rel="stylesheet">
+    <link href="/css/datatables/jquery.dataTables.min.css" rel="stylesheet">
+    <link href="/css/datatables/datatables.min.css" rel="stylesheet">
 </head>
 <body>
 <!-- Tabs -->
@@ -15,6 +18,7 @@
         <li><a href="#tabs-2">extends Graph</a></li>
         <li><a href="#tabs-3">angel 욘두</a></li>
         <li><a href="#tabs-4">TEST</a></li>
+        <li><a href="#tabs-tables">Tables</a></li>
     </ul>
     <div id="tabs-0">
         <button type="button" id="ajaxButton">Run REST To Clipper</button>
@@ -31,9 +35,6 @@
         <div id="extendsGraph"></div>
     </div>
     <div id="tabs-3">
-        <noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript! Websocket relies on Javascript being
-            enabled. Please enable
-            Javascript and reload this page!</h2></noscript>
         <div id="main-content" class="container">
             <div class="row">
                 <div class="col-md-6">
@@ -75,6 +76,28 @@
         <label>Test Run Command</label>
         <button onclick="runCommand()">TEST COMMAND</button>
     </div>
+    <div id="tabs-tables">
+        <label>Test Run Command</label>
+        <button onclick="tableUtil.getTable();"> get data </button>
+        <table id="user-table">
+            <thead>
+                <tr>
+                    <th>id</th>
+                    <th>name</th>
+                    <th>description</th>
+                    <th>models</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th>id</th>
+                    <th>name</th>
+                    <th>description</th>
+                    <th>models</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
 </div>
 
 </body>
@@ -88,9 +111,15 @@
 <script src="/js/websocket/sockjs-1.3.0.min.js"></script>
 <script src="/js/websocket/stomp.min.js"></script>
 <script src="/js/websocket/app.js"></script>
+<!--<script src="/js/datatables/datatables.min.js"></script>-->
+<script src="/js/datatables/jquery.dataTables.min.js"></script>
+<script src="/js/datatables/dataTables.jqueryui.min.js"></script>
+<script src="/js/wilson/table-util.js"></script>
 <script>
+
     $(document).ready(function() {
         console.log("init completed...");
+        $( "#tabs" ).tabs();
     });
 
     $('#test-button').click(function() {
@@ -98,8 +127,8 @@
         alert(input_value);
     });
 
-    $( "#tabs" ).tabs();
 
+    var tableUtil = new TableUtils('user-table');
     $( '#ajaxButton' ).click(function(event) {
         event.preventDefault();
         let param = new Object();

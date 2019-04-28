@@ -10,4 +10,5 @@ import java.util.List;
 @Mapper
 public interface UserMapper {
     List<User> getUser();
+    List<User> selectUser();
 }

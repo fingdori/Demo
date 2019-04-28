@@ -11,16 +11,17 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="com.example.log4j2demo" level="debug" additivity="false">
-            <AppenderRef ref="ConsoleAppender" />
-        </Logger>
+        <!--<Logger name="com.example.log4j2demo" level="debug" additivity="false">-->
+            <!--<AppenderRef ref="ConsoleAppender" />-->
+        <!--</Logger>-->
 
-        <Root level="info">
+        <Root level="DEBUG">
             <AppenderRef ref="ConsoleAppender" />
         </Root>
 
         <logger name="DatabaseServiceImpl">
             <level value="debug"/>
+            <AppenderRef ref="ConsoleAppender" />
         </logger>
 
     </Loggers>
