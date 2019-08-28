@@ -4,9 +4,9 @@
     <title>In Templates Getting Started: Serving Web Content</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link href="/css/jquery-ui.css" rel="stylesheet">
-    <link href="/css/datatables/dataTables.jqueryui.min.css" rel="stylesheet">
-    <link href="/css/datatables/jquery.dataTables.min.css" rel="stylesheet">
-    <link href="/css/datatables/datatables.min.css" rel="stylesheet">
+    <link href="/css/datatables/DataTables-1.10.18/dataTables.jqueryui.min.css" rel="stylesheet">
+    <link href="/css/datatables/DataTables-1.10.18/jquery.dataTables.css" rel="stylesheet">
+    <!--<link href="/css/datatables/datatables.min.css" rel="stylesheet">-->
 </head>
 <body>
 <!-- Tabs -->
@@ -79,7 +79,7 @@
     <div id="tabs-tables">
         <label>Test Run Command</label>
         <button onclick="tableUtil.getTable();"> get data </button>
-        <table id="user-table">
+        <table id="user-table" class="display" style="width:100%">
             <thead>
                 <tr>
                     <th>id</th>
