@@ -5,10 +5,7 @@ import io.kubernetes.client.ApiClient;
 import io.kubernetes.client.ApiException;
 import io.kubernetes.client.Configuration;
 import io.kubernetes.client.apis.CoreV1Api;
-import io.kubernetes.client.models.V1Namespace;
-import io.kubernetes.client.models.V1Pod;
-import io.kubernetes.client.models.V1PodCondition;
-import io.kubernetes.client.models.V1PodList;
+import io.kubernetes.client.models.*;
 import io.kubernetes.client.util.ClientBuilder;
 import io.kubernetes.client.util.Config;
 import io.kubernetes.client.util.KubeConfig;
@@ -109,7 +106,7 @@ public class Client {
          *                                      ProgressRequestListener progressRequestListener) throws ApiException {
          *
          */
-        Watch<V1PodList> watch =
+        Watch<V1Pod> watch =
                 Watch.createWatch(
                         client,
                         api.listPodForAllNamespacesCall(null,
@@ -120,18 +117,29 @@ public class Client {
                                 null,
                                 null,
                                 null,
-                                false,
+                                true,
                                 null,
                                 null),
-                        new TypeToken<Watch.Response<V1PodList>>() {
+                        new TypeToken<Watch.Response<V1Pod>>() {
                         }.getType());
 
         try {
-            for (Watch.Response<V1PodList> item : watch) {
-                if(item.type != null) {
+            for (Watch.Response<V1Pod> item : watch) {
+                if (item.type != null) {
                     System.out.println("type : " + item.type);
                 }
-                System.out.println(item.toString());
+                if (item.status != null) {
+                    System.out.println("code : {}" + item.status.getCode());
+                    System.out.println("status : " + item.status.getStatus());
+                }
+
+                V1PodStatus podStatus = item.object.getStatus();
+                String name = item.object.getMetadata().getName();
+                String status = podStatus.getPhase();
+                String kind = item.object.getKind();
+                String details = podStatus.toString();
+
+                System.out.println("\n");
             }
         } finally {
             watch.close();
