@@ -106,10 +106,12 @@ public class Client {
          *                                      ProgressRequestListener progressRequestListener) throws ApiException {
          *
          */
+
         Watch<V1Pod> watch =
                 Watch.createWatch(
                         client,
-                        api.listPodForAllNamespacesCall(null,
+                        api.listNamespacedPodCall("default",
+                                null,
                                 null,
                                 null,
                                 null,
@@ -138,7 +140,21 @@ public class Client {
                 String status = podStatus.getPhase();
                 String kind = item.object.getKind();
                 String details = podStatus.toString();
+                System.out.println("detail : " + details);
+                boolean ready = true;
+                for(V1ContainerStatus cs:podStatus.getContainerStatuses()) {
+                    if(cs.getState().getWaiting() != null) {
+                        System.out.println("================== waiting ==================");
+                        System.out.println("reason : " + cs.getState().getWaiting().getReason());
+                        System.out.println("message : " + cs.getState().getWaiting().getMessage());
+                    }
 
+                    if(!cs.isReady()) {
+                        ready = false;
+                        break;
+                    }
+                }
+                System.out.println("ready : " + ready);
                 System.out.println("\n");
             }
         } finally {
