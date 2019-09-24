@@ -7,24 +7,26 @@ import io.kubernetes.client.Configuration;
 import io.kubernetes.client.apis.CoreV1Api;
 import io.kubernetes.client.models.*;
 import io.kubernetes.client.util.ClientBuilder;
-import io.kubernetes.client.util.Config;
 import io.kubernetes.client.util.KubeConfig;
 import io.kubernetes.client.util.Watch;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.springframework.stereotype.Service;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Service
 public class Client implements Runnable{
-    private final Thread t;
+
+    public ArrayList<String> registerModelPrefixList = new ArrayList<String>();
+    public ArrayList<String> unRegisterModelPrefixList = new ArrayList<String>();
+
 
     public Client() {
-        this.t = new Thread(this);
+        Thread t = new Thread(this);
         t.start();
     }
 
@@ -91,9 +93,6 @@ public class Client implements Runnable{
 
         String kubeConfigPath = "/Users/sanghyunbak/.kube/kube.gpu/config";
 
-
-
-
         /**
          * listPodForAllNamespacesCall(String _continue
          *                                   String fieldSelector,
@@ -152,11 +151,15 @@ public class Client implements Runnable{
 
                 V1PodStatus podStatus = item.object.getStatus();
                 String name = item.object.getMetadata().getName();
-                String status = podStatus.getPhase();
-                String kind = item.object.getKind();
-                String details = podStatus.toString();
-                System.out.println("detail : " + details);
+                System.out.println("=========================================");
+                System.out.println("name : " + name);
                 boolean ready = true;
+
+                if(podStatus == null || podStatus.getContainerStatuses() == null) {
+                    System.out.println("pod status is null ...");
+                    continue;
+                }
+
                 for(V1ContainerStatus cs:podStatus.getContainerStatuses()) {
                     if(cs.getState().getWaiting() != null) {
                         System.out.println("================== waiting ==================");
@@ -164,10 +167,35 @@ public class Client implements Runnable{
                         System.out.println("message : " + cs.getState().getWaiting().getMessage());
                     }
 
+                    if(cs.getState().getRunning() != null) {
+                        System.out.println("================== Running ==================");
+                        System.out.println("reason : " + cs.getState().getRunning().getStartedAt());
+                    }
+
+                    if(cs.getState().getTerminated() != null) {
+                        System.out.println("================== Terminated ==================");
+                        System.out.println("reason : " + cs.getState().getTerminated().getReason());
+                        System.out.println("reason : " + cs.getState().getTerminated().getMessage());
+                        System.out.println("reason : " + cs.getState().getTerminated().getStartedAt());
+                        System.out.println("reason : " + cs.getState().getTerminated().getFinishedAt());
+                    }
+
+                    System.out.println("restart count : " + cs.getRestartCount());
                     if(!cs.isReady()) {
                         ready = false;
                         break;
                     }
+                }
+
+                if (ready) {
+                    System.out.println("[" + String.join("," , registerModelPrefixList) + "]");
+
+                   for (String s : registerModelPrefixList) {
+                       if (name.startsWith(s)) {
+                           registerModelPrefixList.remove(s);
+                           System.out.println("list (" + s + ") is deleted");
+                       }
+                   }
                 }
                 System.out.println("ready : " + ready);
                 System.out.println("\n");
