@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import com.example.demo.k8s.*;
+import com.example.demo.model.ClipperModel;
 import com.example.demo.model.ClipperRestPostBody;
 import com.example.demo.model.PredictionData;
 
@@ -24,14 +26,17 @@ public class MainRestController {
     private final RestService restService;
     private final CommandService commandService;
     private final DatabaseService databaseService;
+    private final Client client;
 
     @Autowired
     public MainRestController(RestService restService,
                               CommandService commandService,
-                              DatabaseService databaseService) {
+                              DatabaseService databaseService,
+                              Client client) {
         this.commandService = commandService;
         this.restService = restService;
         this.databaseService = databaseService;
+        this.client = client;
     }
 
     @PostMapping(path = "/ajax/predict", consumes = "application/json")
@@ -76,8 +81,15 @@ public class MainRestController {
     public void testDb() {
         this.databaseService.getUser();
     }
+
     @PostMapping(path= "/ajax/selectUser")
     public String selectTable() {
         return this.databaseService.selectTable();
+    }
+
+    @PostMapping(path= "/register")
+    public String register(@RequestBody ClipperModel model) {
+        client.registerModelPrefixList.add(model.getModelName() + "-" + model.getModelVersion());
+        return "register success!(" + model.getModelName() + ", " + model.getModelVersion() + ")";
     }
 }
