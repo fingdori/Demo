@@ -10,6 +10,8 @@ import io.kubernetes.client.util.ClientBuilder;
 import io.kubernetes.client.util.Config;
 import io.kubernetes.client.util.KubeConfig;
 import io.kubernetes.client.util.Watch;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.springframework.stereotype.Service;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -17,7 +19,15 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class Client {
+@Service
+public class Client implements Runnable{
+    private final Thread t;
+
+    public Client() {
+        this.t = new Thread(this);
+        t.start();
+    }
+
     public static void k8sTest() throws IOException, ApiException {
         ApiClient client = ClientBuilder.cluster().build();
 
@@ -77,19 +87,11 @@ public class Client {
     /**
      * A simple example of how to use Watch API to watch changes in Namespace list.
      */
-    public static void watch() throws IOException, ApiException {
+    public void watch() {
 
         String kubeConfigPath = "/Users/sanghyunbak/.kube/kube.gpu/config";
 
-        // loading the out-of-cluster config, a kubeconfig from file-system
-        ApiClient client =
-                ClientBuilder.kubeconfig(KubeConfig.loadKubeConfig(new FileReader(kubeConfigPath))).build();
 
-//        ApiClient client = Config.defaultClient();
-        client.getHttpClient().setReadTimeout(0, TimeUnit.SECONDS); // infinite timeout
-        Configuration.setDefaultApiClient(client);
-
-        CoreV1Api api = new CoreV1Api();
 
 
         /**
@@ -107,25 +109,38 @@ public class Client {
          *
          */
 
-        Watch<V1Pod> watch =
-                Watch.createWatch(
-                        client,
-                        api.listNamespacedPodCall("default",
-                                null,
-                                null,
-                                null,
-                                null,
-                                null,
-                                null,
-                                null,
-                                null,
-                                true,
-                                null,
-                                null),
-                        new TypeToken<Watch.Response<V1Pod>>() {
-                        }.getType());
 
+    while(true) {
+        System.out.println("Start !!! HAHAHAHAHAHAHAHAHA ");
         try {
+            // loading the out-of-cluster config, a kubeconfig from file-system
+            ApiClient client =
+                    ClientBuilder.kubeconfig(KubeConfig.loadKubeConfig(new FileReader(kubeConfigPath))).build();
+
+//        ApiClient client = Config.defaultClient();
+            client.getHttpClient().setReadTimeout(0, TimeUnit.SECONDS); // infinite timeout
+            Configuration.setDefaultApiClient(client);
+
+            CoreV1Api api = new CoreV1Api();
+
+            Watch<V1Pod> watch =
+                    Watch.createWatch(
+                            client,
+                            api.listNamespacedPodCall("default",
+                                    null,
+                                    null,
+                                    null,
+                                    null,
+                                    null,
+                                    null,
+                                    null,
+                                    null,
+                                    true,
+                                    null,
+                                    null),
+                            new TypeToken<Watch.Response<V1Pod>>() {
+                            }.getType());
+
             for (Watch.Response<V1Pod> item : watch) {
                 if (item.type != null) {
                     System.out.println("type : " + item.type);
@@ -157,8 +172,14 @@ public class Client {
                 System.out.println("ready : " + ready);
                 System.out.println("\n");
             }
-        } finally {
-            watch.close();
+        } catch (Exception e){
+            System.out.println("exception occur!! : " + ExceptionUtils.getStackTrace(e));
         }
+    }
+    }
+
+    @Override
+    public void run() {
+        watch();
     }
 }
